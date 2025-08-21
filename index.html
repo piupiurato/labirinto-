@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labirinto do Amor 💖</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: #ffe6f0;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    color: #d6336c;
+  }
+
+  .maze {
+    display: grid;
+    grid-template-columns: repeat(10, 50px);
+    grid-template-rows: repeat(10, 50px);
+    gap: 2px;
+    margin-top: 20px;
+    position: relative; /* importante para o player absolute */
+  }
+
+  .cell {
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border: 2px solid #d6336c;
+    box-sizing: border-box;
+  }
+
+  .wall { background-color: #d6336c; }
+  .start { background-color: #33d699; }
+  .end { background-color: #ffcc00; }
+
+  .player {
+    width: 40px;
+    height: 40px;
+    background-color: #ff66b3;
+    border-radius: 50%;
+    position: absolute; /* move dentro do grid */
+    transition: top 0.2s, left 0.2s;
+  }
+
+  #message {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #d6336c;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>Labirinto do Amor 💖</h1>
+
+<div class="maze" id="maze"></div>
+<div id="message"></div>
+
+<script>
+const mazeLayout = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [2,0,0,0,1,0,0,0,0,1],
+  [1,0,1,0,1,0,1,1,0,1],
+  [1,0,1,0,0,0,0,1,0,1],
+  [1,0,1,1,1,1,0,1,0,1],
+  [1,0,0,0,0,1,0,1,0,3],
+  [1,1,1,1,0,1,0,1,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,1,1,1,1,1,1,0,1],
+  [1,1,1,1,1,1,1,1,1,1]
+];
+
+const maze = document.getElementById('maze');
+const rows = mazeLayout.length;
+const cols = mazeLayout[0].length;
+
+let playerPosition = { x: 0, y: 1 };
+
+function createMaze() {
+  maze.innerHTML = '';
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      if (mazeLayout[y][x] === 1) cell.classList.add('wall');
+      if (mazeLayout[y][x] === 2) cell.classList.add('start');
+      if (mazeLayout[y][x] === 3) cell.classList.add('end');
+      cell.id = `cell-${x}-${y}`;
+      maze.appendChild(cell);
+    }
+  }
+
+  // adiciona o player dentro do grid
+  const player = document.createElement('div');
+  player.classList.add('player');
+  player.id = 'player';
+  maze.appendChild(player);
+  updatePlayerPosition();
+}
+
+function updatePlayerPosition() {
+  const player = document.getElementById('player');
+  player.style.left = playerPosition.x * 50 + 5 + 'px';
+  player.style.top = playerPosition.y * 50 + 5 + 'px';
+}
+
+function movePlayer(dx, dy) {
+  const newX = playerPosition.x + dx;
+  const newY = playerPosition.y + dy;
+
+  if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) return;
+  if (mazeLayout[newY][newX] === 1) return;
+
+  playerPosition.x = newX;
+  playerPosition.y = newY;
+  updatePlayerPosition();
+
+  if (mazeLayout[newY][newX] === 3) {
+    document.getElementById('message').innerText = '💖 Parabéns! Encontraste o final do Labirinto do Amor! 💖';
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case 'ArrowUp': movePlayer(0, -1); break;
+    case 'ArrowDown': movePlayer(0, 1); break;
+    case 'ArrowLeft': movePlayer(-1, 0); break;
+    case 'ArrowRight': movePlayer(1, 0); break;
+  }
+});
+
+createMaze();
+</script>
+
+</body>
+</html>
