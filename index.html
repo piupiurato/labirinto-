@@ -140,7 +140,29 @@ document.addEventListener('keydown', (e) => {
 });
 
 createMaze();
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 30) movePlayer(1, 0);   // swipe direita
+    else if (dx < -30) movePlayer(-1, 0); // swipe esquerda
+  } else {
+    if (dy > 30) movePlayer(0, 1);   // swipe baixo
+    else if (dy < -30) movePlayer(0, -1); // swipe cima
+  }
+});
 </script>
 
 </body>
 </html>
+
